@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WUT - Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="/static/Icons/Favicon.png" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Satisfy&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.2;
+        }
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+        .fancy-font {
+            font-family: 'Satisfy', cursive;
+        }
+        .input-group {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .input-group label {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: white;
+            color: #718096;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            padding: 0 5px;
+            pointer-events: none;
+        }
+        .input-group input:focus,
+        .input-group input:not(:placeholder-shown) {
+            border-color: #a855f7;
+        }
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: 0;
+            font-size: 12px;
+            color: #a855f7;
+        }
+        #messageModal {
+            transition: all 0.5s ease-in-out;
+            transform: scale(0.5);
+            opacity: 0;
+        }
+        #messageModal.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+        .checkmark__circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            stroke-width: 2;
+            stroke-miterlimit: 10;
+            stroke: #7e22ce;
+            fill: none;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+        }
+        .checkmark {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 2;
+            stroke: #fff;
+            stroke-miterlimit: 10;
+            margin: 10% auto;
+            box-shadow: inset 0px 0px 0px #7e22ce;
+            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+        }
+        .checkmark__check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+        @keyframes stroke {
+            100% { stroke-dashoffset: 0; }
+        }
+        @keyframes scale {
+            0%, 100% { transform: none; }
+            50% { transform: scale3d(1.1, 1.1, 1); }
+        }
+        @keyframes fill {
+            100% { box-shadow: inset 0px 0px 0px 30px #7e22ce; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4 relative overflow-hidden">
+    <!-- Animated background icons -->
+    <div class="absolute inset-0 pointer-events-none">
+        <i class="ri-task-line text-4xl md:text-5xl text-blue-400 absolute top-1/4 left-1/4 floating" style="animation-delay: 0s;"></i>
+        <i class="ri-todo-line text-4xl md:text-5xl text-green-400 absolute top-1/4 right-1/4 floating" style="animation-delay: 0.5s;"></i>
+        <i class="ri-list-check text-4xl md:text-5xl text-yellow-400 absolute bottom-1/4 left-1/4 floating" style="animation-delay: 1s;"></i>
+        <i class="ri-calendar-todo-line text-4xl md:text-5xl text-red-400 absolute bottom-1/4 right-1/4 floating" style="animation-delay: 1.5s;"></i>
+        <i class="ri-checkbox-circle-line text-4xl md:text-5xl text-purple-400 absolute top-1/2 left-1/4 floating" style="animation-delay: 2s;"></i>
+        <i class="ri-file-list-3-line text-4xl md:text-5xl text-pink-400 absolute top-1/2 right-1/4 floating" style="animation-delay: 2.5s;"></i>
+        <i class="ri-bookmark-line text-4xl md:text-5xl text-orange-400 absolute top-1/4 center floating" style="animation-delay: 3s; left: 50%; transform: translateX(-50%);"></i>
+        <i class="ri-alarm-line text-4xl md:text-5xl text-blue-300 absolute bottom-1/4 center floating" style="animation-delay: 3.5s; left: 50%; transform: translateX(-50%);"></i>
+        <i class="ri-timer-line text-4xl md:text-5xl text-green-300 absolute top-1/2 left-1/2 floating" style="animation-delay: 4s; transform: translate(-50%, -50%);"></i>
+    </div>
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-2xl text-center max-w-sm mx-auto">
+            <div id="modalIcon" class="mb-4">
+                <!-- Animated Tick Icon -->
+                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            <p id="modalMessage" class="text-xl font-semibold"></p>
+        </div>
+    </div>
+
+    <div class="max-w-md w-full z-10">
+        <div class="bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 md:p-8 text-white text-center">
+                <h1 class="text-5xl md:text-6xl font-bold mb-2 fancy-font">WUT</h1>
+                <p class="text-xl md:text-2xl fancy-font">Where Unfinished Tasks End</p>
+            </div>
+            <div class="p-6 md:p-8">
+                <form id="registrationForm" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-6 flex justify-center">
+                        <div class="relative w-28 h-28 md:w-36 md:h-36 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border-4 border-purple-400 shadow-lg">
+                            <i class="ri-user-smile-line text-5xl md:text-6xl text-purple-400" id="userIcon"></i>
+                            <img id="previewImage" class="absolute inset-0 w-full h-full object-cover hidden" alt="Your profile picture">
+                            <input type="file" accept="image/*" name="profile_picture" class="absolute inset-0 opacity-0 cursor-pointer">
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="input-group">
+                            <input type="text" id="name" name="name" placeholder=" " required>
+                            <label for="name">Your Name</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" id="email" name="email" placeholder=" " required>
+                            <label for="email">Your Email</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="password" name="password" placeholder=" " required>
+                            <label for="password">Create Password</label>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-full font-semibold text-lg mt-6 hover:opacity-90 transition duration-300 shadow-md">
+                        Join Now
+                    </button>
+                </form>
+                <p class="mt-6 text-center text-sm text-gray-600">
+                    Already a member? <a href="/" class="text-purple-600 hover:underline font-semibold">Log in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.querySelector('input[type="file"]');
+            const form = document.getElementById('registrationForm');
+            const previewImg = document.getElementById('previewImage');
+            const userIcon = document.getElementById('userIcon');
+
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewImg.src = e.target.result;
+                        previewImg.classList.remove('hidden');
+                        userIcon.classList.add('hidden');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Display Django messages in modal
+            {% if messages %}
+                {% for message in messages %}
+                    showModal('{{ message.tags }}', '{{ message }}');
+                {% endfor %}
+            {% endif %}
+        });
+
+        function showModal(type, message) {
+            const modal = document.getElementById('messageModal');
+            const modalIcon = document.getElementById('modalIcon');
+            const modalMessage = document.getElementById('modalMessage');
+
+            if (type === 'error') {
+                modalIcon.innerHTML = '❌';
+                modalIcon.className = 'text-6xl mb-4 text-red-500';
+            } else {
+                modalIcon.innerHTML = `
+                    <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                        <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                        <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                    </svg>
+                `;
+            }
+
+            modalMessage.textContent = message;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('show'), 10);
+
+            setTimeout(() => {
+                modal.classList.remove('show');
+                setTimeout(() => modal.classList.add('hidden'), 500);
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
