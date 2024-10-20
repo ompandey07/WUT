@@ -8,141 +8,85 @@
     <link rel="shortcut icon" href="/static/Icons/Favicon.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Satisfy&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Source Sans Pro', sans-serif;
-        }
-        .fancy-font {
-            font-family: 'Satisfy', cursive;
-        }
-        .input-group {
-            position: relative;
-            margin-bottom: 15px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 10px 15px;
-            border: 2px solid #e2e8f0;
-            border-radius: 25px;
-            font-size: 16px;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        .input-group label {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: white;
-            color: #718096;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            padding: 0 5px;
-            pointer-events: none;
-        }
-        .input-group input:focus,
-        .input-group input:not(:placeholder-shown) {
-            border-color: #a855f7;
-        }
-        .input-group input:focus + label,
-        .input-group input:not(:placeholder-shown) + label {
-            top: 0;
-            font-size: 12px;
-            color: #a855f7;
-        }
-        #errorModal {
-            transition: opacity 0.3s ease-in-out;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/Css/Login/login.css">
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body>
     <!-- Error Modal -->
-    <div id="errorModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden flex items-center justify-center">
-        <div class="bg-white p-8 rounded-lg shadow-xl text-center max-w-sm mx-auto">
-            <div class="text-6xl mb-4 text-red-500">😢</div>
-            <p id="errorMessage" class="text-xl font-semibold mb-4">Wrong username or password</p>
-            <button onclick="closeModal()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition duration-300">Close</button>
+    <div id="errorModal" class="fixed top-0 left-0 right-0 bg-red-500 text-white p-4 transform -translate-y-full transition-transform duration-300 ease-in-out z-50">
+        <div class="container mx-auto flex items-center justify-between">
+            <div class="flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <p id="errorMessage" class="text-sm font-medium">Invalid credentials</p>
+            </div>
+            <button onclick="closeModal()" class="text-white hover:text-gray-200 transition-colors duration-200">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
     </div>
 
-    <div class="max-w-4xl w-full">
-        <div class="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col lg:flex-row">
-            <!-- Left side - Image -->
-            <div class="w-full lg:w-1/2 bg-gradient-to-br from-blue-500 to-purple-600 p-6 flex items-center justify-center">
-                <div class="text-center">
-                    <p class="text-lg lg:text-xl fancy-font text-white">Where Unfinished Tasks End</p>
-                    <img src="/static/Images/Logo.png" alt="WUT Illustration" class="mt-6 max-w-[200px] lg:max-w-[250px] mx-auto">
-                </div>
-            </div>
-            
-            <!-- Right side - Login Form -->
-            <div class="w-full lg:w-1/2 p-6 lg:p-8 flex flex-col justify-center">
-                <div class="text-center mb-6">
-                    <i class="ri-emotion-happy-line text-4xl lg:text-5xl text-purple-500 mb-2"></i>
-                    <h2 class="text-2xl lg:text-3xl font-bold text-gray-800 fancy-font">Welcome Back!</h2>
-                </div>
-                <form id="loginForm" class="space-y-4" method="post">
-                    {% csrf_token %}
-                    <div class="input-group">
-                        <input type="email" id="email" name="email" placeholder=" " required>
-                        <label for="email">Your Email</label>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="password" name="password" placeholder=" " required>
-                        <label for="password">Password</label>
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-full font-semibold text-lg hover:opacity-90 transition duration-300 shadow-md">
-                        Login
-                    </button>
-                </form>
-                <p class="mt-4 text-center text-sm text-gray-600">
-                    Don't have an account? <a href="/register" class="text-purple-600 hover:underline font-semibold">Create one</a>
-                </p>
-            </div>
+    <!-- Preloader -->
+    <div id="preloader" class="loader">
+        <div class="book-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 126 75" class="book">
+                <rect stroke-width="5" stroke="#e05452" rx="7.5" height="70" width="121" y="2.5" x="2.5"></rect>
+                <line stroke-width="5" stroke="#e05452" y2="75" x2="63.5" x1="63.5"></line>
+                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M25 20H50"></path>
+                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M101 20H76"></path>
+                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M16 30L50 30"></path>
+                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M110 30L76 30"></path>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff74" viewBox="0 0 65 75" class="book-page">
+                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M40 20H15"></path>
+                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M49 30L15 30"></path>
+                <path stroke-width="5" stroke="#e05452" d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"></path>
+            </svg>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('loginForm');
-            const errorModal = document.getElementById('errorModal');
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const formData = new FormData(form);
-
-                fetch('', {  // Empty string means submit to the current URL
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        window.location.href = data.redirect;  // Redirect to the dashboard
-                    } else {
-                        showModal(data.message || 'An error occurred');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showModal('An error occurred. Please try again.');
-                });
-            });
-        });
-
-        function showModal(message) {
-            const errorModal = document.getElementById('errorModal');
-            const errorMessage = document.getElementById('errorMessage');
-            errorMessage.textContent = message;
-            errorModal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('errorModal').classList.add('hidden');
-        }
-    </script>
+    <!-- Main Content -->
+    <div id="mainContent" class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+        <div class="max-w-4xl w-full">
+            <div class="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col lg:flex-row">
+                <!-- Left side - Image -->
+                <div class="w-full lg:w-1/2 bg-gradient-to-br from-blue-500 to-purple-600 p-6 flex items-center justify-center">
+                    <div class="text-center">
+                        <p class="text-lg lg:text-xl fancy-font text-white">Where Unfinished Tasks End</p>
+                        <img src="/static/Images/Logo.png" alt="WUT Illustration" class="mt-6 max-w-[200px] lg:max-w-[250px] mx-auto">
+                    </div>
+                </div>
+                
+                <!-- Right side - Login Form -->
+                <div class="w-full lg:w-1/2 p-6 lg:p-8 flex flex-col justify-center">
+                    <div class="text-center mb-6">
+                        <i class="ri-emotion-happy-line text-4xl lg:text-5xl text-purple-500 mb-2"></i>
+                        <h2 class="text-2xl lg:text-3xl font-bold text-gray-800 fancy-font">Welcome Back!</h2>
+                    </div>
+                    <form id="loginForm" class="space-y-4" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="email" id="email" name="email" placeholder=" " required>
+                            <label for="email">Your Email</label>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" id="password" name="password" placeholder=" " required>
+                            <label for="password">Password</label>
+                        </div>
+                        <button type="submit" id="loginButton" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-full font-semibold text-lg hover:opacity-90 transition duration-300 shadow-md">
+                            <span id="loginText">Login</span>
+                            <span id="loginSpinner" class="spinner hidden"></span>
+                        </button>
+                    </form>
+                    <p class="mt-4 text-center text-sm text-gray-600">
+                        Don't have an account? <a href="/register" class="text-purple-600 hover:underline font-semibold">Create one</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/Css/Login/login.js"></script>
 </body>
 </html>

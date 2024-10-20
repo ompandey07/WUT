@@ -1,14 +1,18 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import CustomUser
 from django.views.decorators.csrf import csrf_exempt
-from django.core.files.base import ContentFile
 from django.contrib import messages
 from django.contrib.auth import login
 
 
+
+
+#############################################################
+#*** This View Handles Registration Of Users ***
+#############################################################
 def register_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -32,9 +36,16 @@ def register_view(request):
         return redirect('register')  
 
     return render(request, 'Reg & Logins/Register.html')
+#############################################################
+# View Ends Here
+#############################################################
 
 
 
+
+#############################################################
+#*** This View Handles Login Of Users ***
+#############################################################
 @csrf_exempt
 def login_view(request):
     if request.method == 'POST':
@@ -47,7 +58,39 @@ def login_view(request):
         else:
             return JsonResponse({'status': 'error', 'message': 'Invalid credentials'})
     return render(request, 'Reg & Logins/Login.html')
+#############################################################
+# This View Ends Here 
+#############################################################
 
+
+
+
+#############################################################
+# This View Handles Logout Of Users 
+#############################################################
+def logout_view(request):
+    logout(request)
+    return redirect('login_view')
+#############################################################
+# This View Ends Here 
+#############################################################
+
+
+
+
+
+
+
+############################################################################################################################################################################
+                                                                    #  !  All Other Addtional Views 
+############################################################################################################################################################################                                                                       
+
+
+
+
+#############################################################
+#**** This View Handles Dashboards Of Users ***#
+#############################################################
 @login_required
 def dashboard_view(request):
-    return render(request, "Dashbords/Dashboard.html", {'user': request.user})
+    return render(request, "Dashboards/Dashboard.html", {'user': request.user})
