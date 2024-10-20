@@ -1,0 +1,169 @@
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+.floating {
+    animation: float 6s ease-in-out infinite;
+    opacity: 0.2;
+}
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    background-color: white;
+    overflow-x: hidden;
+}
+.fancy-font {
+    font-family: 'Satisfy', cursive;
+}
+.input-group {
+    position: relative;
+    margin-bottom: 30px;
+}
+.input-group input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+.input-group label {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: white;
+    color: #718096;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    padding: 0 5px;
+    pointer-events: none;
+}
+.input-group input:focus,
+.input-group input:not(:placeholder-shown) {
+    border-color: #a855f7;
+}
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    top: 0;
+    font-size: 12px;
+    color: #a855f7;
+}
+#messageModal {
+    transition: all 0.5s ease-in-out;
+    transform: scale(0.5);
+    opacity: 0;
+}
+#messageModal.show {
+    transform: scale(1);
+    opacity: 1;
+}
+.checkmark__circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: #7e22ce;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+.checkmark {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: block;
+    stroke-width: 2;
+    stroke: #fff;
+    stroke-miterlimit: 10;
+    margin: 10% auto;
+    box-shadow: inset 0px 0px 0px #7e22ce;
+    animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+.checkmark__check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+@keyframes stroke {
+    100% { stroke-dashoffset: 0; }
+}
+@keyframes scale {
+    0%, 100% { transform: none; }
+    50% { transform: scale3d(1.1, 1.1, 1); }
+}
+@keyframes fill {
+    100% { box-shadow: inset 0px 0px 0px 30px #7e22ce; }
+}
+.loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 9999;
+}
+.book-wrapper {
+    width: 150px;
+    height: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+}
+.book {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(10px 10px 5px rgba(0, 0, 0, 0.137));
+}
+.book-wrapper .book-page {
+    width: 50%;
+    height: auto;
+    position: absolute;
+    animation: paging 0.15s linear infinite;
+    transform-origin: left;
+}
+@keyframes paging {
+    0% { transform: rotateY(0deg) skewY(0deg); }
+    50% { transform: rotateY(90deg) skewY(-20deg); }
+    100% { transform: rotateY(180deg) skewY(0deg); }
+}
+#mainContent {
+    display: none;
+    opacity: 0;
+    transform: translateX(-100%) rotateY(-90deg);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+@keyframes zigZag {
+    0% { transform: translateX(-100%) rotateY(-90deg); }
+    25% { transform: translateX(-50%) rotateY(45deg); }
+    50% { transform: translateX(0%) rotateY(-45deg); }
+    75% { transform: translateX(50%) rotateY(45deg); }
+    100% { transform: translateX(0%) rotateY(0deg); }
+}
+.animate-zigzag {
+    animation: zigZag 1s ease-out forwards;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.spinner {
+    border: 4px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top: 4px solid #fff;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+}
+.modal-content {
+    max-width: 400px;
+    width: 90%;
+}

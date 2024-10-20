@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/static/Icons/Favicon.png" type="image/x-icon">
+    <title>{{ user.get_full_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Dancing+Script&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .cover-photo {
+            background-image: url('{{ cover_photo }}');
+            background-size: cover;
+            background-position: center;
+            height: 200px;
+        }
+        @media (min-width: 640px) {
+            .cover-photo {
+                height: 350px;
+            }
+        }
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border: 4px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        @media (min-width: 640px) {
+            .profile-picture {
+                width: 168px;
+                height: 168px;
+            }
+        }
+        .username {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        @media (min-width: 640px) {
+            .username {
+                font-size: 2rem;
+            }
+        }
+        .joined-date {
+            font-size: 0.8rem;
+            color: #65676B;
+        }
+        @media (min-width: 640px) {
+            .joined-date {
+                font-size: 0.9rem;
+            }
+        }
+        .post-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="w-full bg-white shadow-md">
+        <!-- Cover Photo and Profile Picture -->
+        <div class="relative">
+            <div class="cover-photo w-full"></div>
+            <div class="container mx-auto px-4">
+                <img src="{{ profile_picture|default:'https://www.w3schools.com/w3images/avatar2.png' }}" alt="Profile Picture" class="profile-picture rounded-full absolute -bottom-16 left-4 sm:left-8 object-cover">
+            </div>
+        </div>
+
+        <!-- User Info -->
+        <div class="container mx-auto px-4">
+            <div class="mt-20 sm:mt-24 pb-4 border-b border-gray-300 relative">
+                <h1 class="username">{{ user.get_full_name }}</h1>
+                <p class="joined-date mt-1 sm:absolute sm:bottom-4 sm:right-4">
+                    <i class="ri-calendar-line text-blue-500 mr-1"></i>
+                    Joined {{ joined_date }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Posts -->
+    <div class="container mx-auto px-4 py-6">
+        <h2 class="text-xl sm:text-2xl font-bold mb-4 flex items-center">
+            <i class="ri-file-list-3-line text-green-500 mr-2"></i>
+            Posts
+        </h2>
+        <div id="postsContainer" class="space-y-4 sm:space-y-6">
+            <!-- Posts will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        function createPostElement(post) {
+            const date = new Date(post.created_at);
+            return `
+                <div class="post-card p-4">
+                    <div class="flex items-center mb-2 justify-between">
+                        <div class="flex items-center">
+                            <img src="${post.profile_picture || 'https://www.w3schools.com/w3images/avatar2.png'}" alt="User" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full mr-3 object-cover">
+                            <div>
+                                <p class="font-semibold">${post.user_name}</p>
+                                <p class="text-xs sm:text-sm text-gray-500">${date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <a href="#" class="text-blue-500 hover:text-blue-700 mr-2"><i class="ri-edit-line"></i></a>
+                            <a href="#" class="text-red-500 hover:text-red-700"><i class="ri-delete-bin-line"></i></a>
+                        </div>
+                    </div>
+                    <p class="mb-2 text-sm sm:text-base">${post.content}</p>
+                    <div class="flex justify-between text-xs sm:text-sm text-gray-500">
+                        <span class="inline-flex items-center"><i class="ri-eye-line text-purple-500 mr-1"></i>${post.views} views</span>
+                        <span><i class="ri-time-line text-yellow-500 mr-1"></i>${date.toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadPosts() {
+            const postsContainer = document.getElementById('postsContainer');
+            const postsData = JSON.parse('{{ posts_json|escapejs }}');
+            if (postsData.length === 0) {
+                postsContainer.innerHTML = '<p class="text-center text-gray-500">No posts yet.</p>';
+            } else {
+                postsContainer.innerHTML = postsData.map(createPostElement).join('');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPosts);
+
+        // Disable right-click context menu
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+}, false);
+
+// Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+document.addEventListener('keydown', function(e) {
+    // Disable F12
+    if (e.key === 'F12') {
+        e.preventDefault();
+    }
+    
+    // Disable Ctrl+Shift+I (Chrome DevTools)
+    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+        e.preventDefault();
+    }
+    
+    // Disable Ctrl+Shift+J (Console)
+    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+        e.preventDefault();
+    }
+
+    // Disable Ctrl+U (View Source)
+    if (e.ctrlKey && e.key === 'U') {
+        e.preventDefault();
+    }
+
+    // Disable Ctrl+Shift+C (Inspect Element)
+    if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+        e.preventDefault();
+    }
+});
+
+    </script>
+</body>
+</html>

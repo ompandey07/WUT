@@ -2,17 +2,24 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import CustomUser
+from .models import CustomUser , Post
+from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.views.decorators.http import require_http_methods
 from django.contrib.auth import login
-
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 
 #############################################################
 #*** This View Handles Registration Of Users ***
 #############################################################
+@require_http_methods(["GET", "POST"])
+@ensure_csrf_cookie
 def register_view(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -21,20 +28,29 @@ def register_view(request):
         profile_picture = request.FILES.get('profile_picture')
         
         if CustomUser.objects.filter(email=email).exists():
-            messages.error(request, 'Account with this email already exists')
-            return render(request, 'Reg & Logins/Register.html')
+            return JsonResponse({'status': 'error', 'message': 'Account with this email already exists'})
 
-        user = CustomUser.objects.create_user(username=email, email=email, password=password)
-        user.first_name = name
-        
-        if profile_picture:
-            user.profile_picture = profile_picture
-        
-        user.save()
-        login(request, user)
-        messages.success(request, 'Registration successful!')
-        return redirect('register')  
+        try:
+            user = CustomUser.objects.create_user(username=email, email=email, password=password)
+            user.first_name = name
+            
+            if profile_picture:
+                user.profile_picture = profile_picture
+            
+            user.save()
+            login(request, user)
+            
+            # Refresh CSRF token
+            new_csrf_token = get_token(request)
+            return JsonResponse({
+                'status': 'success', 
+                'message': 'Registration successful!',
+                'csrfToken': new_csrf_token
+            })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
 
+    # For GET requests, render the template
     return render(request, 'Reg & Logins/Register.html')
 #############################################################
 # View Ends Here
@@ -91,6 +107,70 @@ def logout_view(request):
 #############################################################
 #**** This View Handles Dashboards Of Users ***#
 #############################################################
+class CustomJSONEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Post):
+            return {
+                'id': obj.id,
+                'content': obj.content,
+                'user_name': obj.user.get_full_name() or obj.user.username,
+                'profile_picture': obj.user.profile_picture.url if obj.user.profile_picture else None,
+                'created_at': obj.created_at.isoformat(),
+                'views': obj.views
+            }
+        return super().default(obj)
+
 @login_required
 def dashboard_view(request):
-    return render(request, "Dashboards/Dashboard.html", {'user': request.user})
+    user = request.user
+    print(f"Current user: {user.username}, ID: {user.id}")  
+    
+    if request.method == "POST":
+        content = request.POST.get('content')
+        if content:
+            post = Post.objects.create(user=user, content=content)
+            return JsonResponse({
+                'status': 'success',
+                'post': CustomJSONEncoder().default(post)
+            })
+        return JsonResponse({'status': 'error', 'message': 'Content is required'})
+
+    posts = Post.objects.all().select_related('user').order_by('-created_at')
+    posts_json = json.dumps(list(posts), cls=CustomJSONEncoder)
+
+    context = {
+        'user': user,
+        'profile_picture': user.profile_picture.url if user.profile_picture else None,
+        'posts_json': posts_json
+    }
+    return render(request, "Pages/Dashboard.html", context)
+#############################################################
+# This View Ends Here 
+#############################################################
+
+
+
+
+
+
+#############################################################
+# **** This View Handles Profiles Of Users ***
+#############################################################
+@login_required
+def user_profile_view(request):
+    user = request.user
+    posts = Post.objects.filter(user=user).order_by('-created_at')
+    
+    posts_json = json.dumps(list(posts), cls=CustomJSONEncoder)
+
+    context = {
+        'user': user,
+        'posts_json': posts_json,
+        'profile_picture': user.profile_picture.url if user.profile_picture else None,
+        'cover_photo': 'https://wallpapercave.com/wp/wp9258170.jpg',  
+        'joined_date': user.registration_date.strftime('%B %d, %Y')
+    }
+    return render(request, 'Pages/UserProfile.html', context)
+#############################################################
+# This View Ends Here 
+#############################################################
