@@ -9,8 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Dancing+Script&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
-        body { font-family: 'Roboto', sans-serif; }
-        .font-script { font-family: 'Dancing Script', cursive; }
+        body { 
+            font-family: 'Roboto', sans-serif;
+        }
+        .font-script { 
+            font-family: 'Dancing Script', cursive; 
+        }
         .scrollable-content {
             max-height: calc(100vh - 180px);
             overflow-y: auto;
@@ -85,126 +89,39 @@
         .dark .modal-content button:hover {
             background-color: #3182ce;
         }
-        textarea:focus {
-            outline: none !important;
-            box-shadow: none !important;
-        }
-        .loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            z-index: 9999;
-        }
-        .book-wrapper {
-            width: 150px;
-            height: fit-content;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            position: relative;
-        }
-        .book {
-            width: 100%;
-            height: auto;
-            filter: drop-shadow(10px 10px 5px rgba(0, 0, 0, 0.137));
-        }
-        .book-wrapper .book-page {
-            width: 50%;
-            height: auto;
-            position: absolute;
-            animation: paging 0.15s linear infinite;
-            transform-origin: left;
-        }
-        @keyframes paging {
-            0% { transform: rotateY(0deg) skewY(0deg); }
-            50% { transform: rotateY(90deg) skewY(-20deg); }
-            100% { transform: rotateY(180deg) skewY(0deg); }
-        }
-        .skeleton {
-            animation: skeleton-loading 1s linear infinite alternate;
-        }
-        @keyframes skeleton-loading {
-            0% { background-color: hsl(200, 20%, 80%); }
-            100% { background-color: hsl(200, 20%, 95%); }
-        }
-        .skeleton-text {
-            width: 100%;
-            height: 0.7rem;
-            margin-bottom: 0.5rem;
-            border-radius: 0.25rem;
-        }
-        .skeleton-text:last-child {
-            width: 80%;
-        }
-        /* Mobile menu styles */
         .mobile-menu {
             position: fixed;
             top: 0;
-            left: -100%;
-            width: 100%;
             height: 100%;
+            width: 100%;
             background-color: white;
             z-index: 1000;
-            transition: left 0.3s ease-in-out;
+            transition: left 0.3s ease-in-out, right 0.3s ease-in-out;
+        }
+        .left-menu {
+            left: -100%;
+        }
+        .right-menu {
+            right: -100%;
         }
         .mobile-menu.open {
             left: 0;
+            right: 0;
         }
-        .dark .mobile-menu {
-            background-color: #1a202c;
+        .task-item {
+            border-bottom: 1px solid #e5e7eb;
         }
-        @media (max-width: 640px) {
-            .modal-content {
-                margin: 0 16px;
-            }
-        }
-        .modal {
-            animation: fadeIn 0.3s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .modal.hide {
-            animation: fadeOut 0.3s ease-in-out;
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
+        .task-item:last-child {
+            border-bottom: none;
         }
     </style>
 </head>
-<body class="font-sans">
-    <!-- Preloader -->
-    <div class="loader" id="preloader">
-        <div class="book-wrapper">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 126 75" class="book">
-                <rect stroke-width="5" stroke="#e05452" rx="7.5" height="70" width="121" y="2.5" x="2.5"></rect>
-                <line stroke-width="5" stroke="#e05452" y2="75" x2="63.5" x1="63.5"></line>
-                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M25 20H50"></path>
-                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M101 20H76"></path>
-                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M16 30L50 30"></path>
-                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M110 30L76 30"></path>
-            </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff74" viewBox="0 0 65 75" class="book-page">
-                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M40 20H15"></path>
-                <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M49 30L15 30"></path>
-                <path stroke-width="5" stroke="#e05452" d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"></path>
-            </svg>
-        </div>
-    </div>
-
-    <div class="h-screen flex flex-col hidden" id="app">
+<body class="bg-gray-100">
+    <div class="h-screen flex flex-col" id="app">
         <!-- Header -->
-        <div class="flex justify-between items-center px-4 py-2 border-b border-gray-300">
+        <div class="flex justify-between items-center px-4 py-2 border-b border-gray-300 bg-white">
             <div class="flex items-center">
-                <button id="mobileMenuToggle" class="mr-4 lg:hidden">
+                <button id="leftMenuToggle" class="lg:hidden mr-4">
                     <i class="ri-menu-line text-2xl"></i>
                 </button>
                 <div class="w-20 h-6">
@@ -212,6 +129,9 @@
                 </div>
             </div>
             <div class="flex items-center">
+                <button id="rightMenuToggle" class="lg:hidden mr-4">
+                    <i class="ri-menu-2-line text-2xl"></i>
+                </button>
                 <button id="darkModeToggle" class="mr-4">
                     <i id="darkModeIcon" class="ri-sun-line text-2xl"></i>
                 </button>
@@ -219,12 +139,12 @@
                     <div class="flex items-center cursor-pointer" onclick="toggleMenu()">
                         <div class="w-6 h-6 bg-gray-300 rounded-full mr-2 overflow-hidden border border-gray-400">
                             {% if profile_picture %}
-                            <img src="{{ user.profile_picture.url }}" alt="{{ user.get_full_name|default:user.username }}" class="w-full h-full object-cover"/>
+                                <img src="{{ profile_picture }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover"/>
                             {% else %}
                                 <img src="https://www.w3schools.com/howto/img_avatar.png" alt="Default Avatar" class="w-full h-full object-cover"/>
                             {% endif %}
                         </div>
-                        <span class="hidden sm:inline">{{ user.get_full_name|default:user.username }}</span>
+                        <span class="hidden sm:inline">{{ user.get_full_name }}</span>
                     </div>
                     <div id="userSubmenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden z-10">
                         <a href="{% url 'user_profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
@@ -240,8 +160,8 @@
 
         <div class="flex flex-1 overflow-hidden">
             <!-- Left Sidebar (hidden on mobile) -->
-            <div class="hidden lg:block w-48 border-r border-gray-300 p-4">                
-                <a href="#" class="sidebar-item flex items-center mb-6 text-green-500 hover:text-green-700">
+            <div class="hidden lg:block w-48 border-r border-gray-300 p-4 bg-white">                
+                <a href="{% url 'work' %}" class="sidebar-item flex items-center mb-6 text-green-500 hover:text-green-700">
                     <img src="/static/Icons/gems.png" alt="Works" class="w-6 h-6 mr-2 object-cover rounded-full"/>
                     <span>Gems</span>
                 </a>
@@ -260,23 +180,28 @@
             </div>
             
             <!-- Right Sidebar (hidden on mobile) -->
-            <div class="hidden lg:block w-64 border-l border-gray-300 p-4 flex flex-col h-full">
-                <h3 class="font-script text-3xl mb-6 mt-4">Recent Add Tasks</h3>
+            <div class="hidden lg:block w-64 border-l border-gray-300 p-4 flex flex-col h-full bg-white">
+                <h3 class="font-script text-3xl mb-6 mt-4">Recent Tasks</h3>
                 <div class="flex-grow overflow-y-auto mb-4">
-                    <div class="flex flex-wrap gap-2">
-                        <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Project1</span>
-                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">Project2</span>
-                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Project3</span>
-                        <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-sm">Project4</span>
-                        <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">Project5</span>
-                    </div>
+                    {% if recent_tasks %}
+                        <ul class="space-y-1">
+                            {% for task in recent_tasks %}
+                                <li class="task-item p-2 text-sm transition-all duration-200 ease-in-out hover:bg-gray-100">
+                                    <p class="font-semibold truncate">{{ task.content }}</p>
+                                    <p class="text-xs text-gray-500">{{ task.created_at|date:"M d, Y H:i" }}</p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-gray-500 text-center">No recent tasks</p>
+                    {% endif %}
                 </div>
-                <a href="#" class="text-blue-500 text-center w-full hover:underline transition-all duration-300 py-2">Check All</a>
+                <a href="{% url 'work' %}" class="text-blue-500 text-center w-full hover:underline transition-all duration-300 py-2">View All Tasks</a>
             </div>
         </div>
 
         <!-- Sticky Footer -->
-        <div class="sticky bottom-0 h-15 flex items-center justify-between px-4 border-t border-gray-300">
+        <div class="sticky bottom-0 h-15 flex items-center justify-between px-4 border-t border-gray-300 bg-white">
             <div class="w-6 h-6">
                 <img src="/static/Images/Logo.png" alt="Logo" class="w-full h-full object-contain"/>
             </div>
@@ -288,16 +213,16 @@
         </div>
     </div>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu lg:hidden" id="mobileMenu">
+    <!-- Left Mobile Menu -->
+    <div id="leftMobileMenu" class="mobile-menu left-menu lg:hidden">
         <div class="flex justify-between items-center p-4 border-b border-gray-300">
             <h2 class="text-xl font-bold">Menu</h2>
-            <button id="closeMobileMenu">
+            <button id="closeLeftMenu">
                 <i class="ri-close-line text-2xl"></i>
             </button>
         </div>
         <div class="p-4">
-            <a href="#" class="sidebar-item flex items-center mb-6 text-green-500 hover:text-green-700">
+            <a href="{% url 'work' %}" class="sidebar-item flex items-center mb-6 text-green-500 hover:text-green-700">
                 <img src="/static/Icons/gems.png" alt="Works" class="w-6 h-6 mr-2 object-cover rounded-full"/>
                 <span>Gems</span>
             </a>
@@ -308,60 +233,86 @@
         </div>
     </div>
 
-    <!-- Welcome Modal -->
-    <div id="welcomeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal hidden">
-        <div class="bg-white p-4 sm:p-8 max-w-sm sm:max-w-md w-11/12 sm:w-full text-center shadow-2xl modal-content ">
-            <h2 class="text-2xl sm:text-3xl font-bold mb-2 sm:mb-4 text-blue-600">Welcome, {{ user.first_name }}! 👋</h2>
-            <p class="text-base sm:text-lg mb-4 sm:mb-6">We're thrilled to have you here!</p>
-            <div class="mb-4 sm:mb-6">
-                <h3 class="text-lg sm:text-xl font-semibold mb-2">Here's a joke to brighten your day:</h3>
-                <p id="jokeText" class="text-gray-700 italic text-sm sm:text-base">"Loading joke..."</p>
-            </div>
-            <button onclick="hideWelcomeModal()" class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-300 text-sm sm:text-base">
-                Let's Get Started!
+    <!-- Right Mobile Menu -->
+    <div id="rightMobileMenu" class="mobile-menu right-menu lg:hidden">
+        <div class="flex justify-between items-center p-4 border-b border-gray-300">
+            <h2 class="text-xl font-bold">Recent Tasks</h2>
+            <button id="closeRightMenu">
+                <i class="ri-close-line text-2xl"></i>
             </button>
+        </div>
+        <div class="p-4">
+            {% if recent_tasks %}
+                <ul class="space-y-1">
+                    {% for task in recent_tasks %}
+                        <li class="task-item p-2 text-sm transition-all duration-200 ease-in-out hover:bg-gray-100">
+                            <p class="font-semibold truncate">{{ task.content }}</p>
+                            <p class="text-xs text-gray-500">{{ task.created_at|date:"M d, Y H:i" }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-500 text-center">No recent tasks</p>
+            {% endif %}
+            <a href="{% url 'work' %}" class="text-blue-500 text-center w-full hover:underline transition-all duration-300 py-2 block mt-4">View All Tasks</a>
         </div>
     </div>
 
-    <!-- Share Thoughts Modal -->
-    <div id="shareThoughtsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal hidden">
-        <div class="bg-white p-4 sm:p-8 max-w-sm sm:max-w-lg w-11/12 sm:w-full shadow-2xl transform transition-all duration-300 ease-in-out modal-content ">
-            <div class="flex justify-between items-center mb-4 sm:mb-6">
-                <h2 class="text-xl sm:text-3xl font-bold text-blue-600">Share your thoughts</h2>
-                <button onclick="hideShareThoughtsModal()" class="text-gray-500 hover:text-gray-700 transition-colors duration-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-            <form id="postForm">
-                {% csrf_token %}
-                <textarea id="postContent" class="w-full h-32 sm:h-40 border border-gray-300 p-2 sm:p-4 mb-4 resize-none rounded-lg text-sm sm:text-base" placeholder="What's on your mind?" required></textarea>
-                <div class="flex items-center justify-between">
-                    <div class="flex space-x-2">
-                        <button type="button" class="p-2 text-gray-500 hover:text-blue-500 transition-colors duration-300">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 animate-high-five" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
-                            </svg>
-                        </button>
-                    </div>
-                    <button type="submit" class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-300 flex items-center text-sm sm:text-base">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg>
-                        Share
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+        <!-- Welcome Modal -->
+       <div id="welcomeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal hidden">
+           <div class="bg-white p-4 sm:p-8 max-w-sm sm:max-w-md w-11/12 text-center shadow-2xl modal-content ">
+               <h2 class="text-2xl sm:text-3xl font-bold mb-2 sm:mb-4 text-blue-600">Welcome, {{ user.first_name }}! 👋</h2>
+               <p class="text-base sm:text-lg mb-4 sm:mb-6">We're thrilled to have you here!</p>
+               <div class="mb-4 sm:mb-6">
+                   <h3 class="text-lg sm:text-xl font-semibold mb-2">Here's a joke to brighten your day:</h3>
+                   <p id="jokeSetup" class="text-gray-700 italic mb-2"></p>
+                   <p id="jokePunchline" class="text-gray-700 italic font-bold"></p>
+               </div>
+               <button onclick="hideWelcomeModal()" class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-300 text-sm sm:text-base">
+                   Let's Get Started!
+               </button>
+           </div>
+       </div>
+
+        <!-- Share Thoughts Modal -->
+      <div id="shareThoughtsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 modal hidden">
+          <div class="bg-white p-4 sm:p-8 max-w-sm sm:max-w-lg w-11/12 shadow-2xl transform transition-all duration-300 ease-in-out modal-content ">
+              <div class="flex justify-between items-center mb-4 sm:mb-6">
+                  <h2 class="text-xl sm:text-3xl font-bold text-blue-600">Share your thoughts</h2>
+                  <button onclick="hideShareThoughtsModal()" class="text-gray-500 hover:text-gray-700 transition-colors duration-300">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                  </button>
+              </div>
+              <form id="postForm">
+                  {% csrf_token %}
+                  <textarea id="postContent" class="w-full h-32 sm:h-40 border border-gray-300 p-2 sm:p-4 mb-4 resize-none rounded-lg text-sm sm:text-base" placeholder="What's on your mind?"></textarea>
+                  <div class="flex items-center justify-between">
+                      <div class="flex space-x-2">
+                          <button type="button" class="p-2 text-gray-500 hover:text-blue-500 transition-colors duration-300">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6 animate-high-five" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+                              </svg>
+                          </button>
+                      </div>
+                      <button type="submit" class="px-4 sm:px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-colors duration-300 flex items-center text-sm sm:text-base">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                          </svg>
+                          Share
+                      </button>
+                  </div>
+               </form>
+          </div>
+      </div>
 
     <script>
         function toggleMenu() {
             const menu = document.getElementById('userSubmenu');
             menu.classList.toggle('hidden');
         }
-        
+
         function updateDateTime() {
             const now = new Date();
             const date = now.toLocaleDateString();
@@ -369,32 +320,37 @@
             document.getElementById('currentDate').textContent = date;
             document.getElementById('currentTime').textContent = time;
         }
-        
+
         async function fetchJoke() {
             try {
-                const response = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
+                const response = await fetch('https://official-joke-api.appspot.com/random_joke');
                 const data = await response.json();
-                return data.joke;
+                return data;
             } catch (error) {
                 console.error('Error fetching joke:', error);
-                return "Why did the scarecrow win an award? Because he was outstanding in his field!";
+                return {
+                    setup: "Why did the scarecrow win an award?",
+                    punchline: "Because he was outstanding in his field!"
+                };
             }
         }
-        
+
         async function showWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
-            const jokeText = document.getElementById('jokeText');
+            const jokeSetup = document.getElementById('jokeSetup');
+            const jokePunchline = document.getElementById('jokePunchline');
             
             modal.classList.remove('hidden');
             
             const joke = await fetchJoke();
-            jokeText.textContent = joke;
-        
+            jokeSetup.textContent = joke.setup;
+            jokePunchline.textContent = joke.punchline;
+
             setTimeout(() => {
                 hideWelcomeModal();
             }, 10000);
         }
-        
+
         function hideWelcomeModal() {
             const modal = document.getElementById('welcomeModal');
             modal.classList.add('hide');
@@ -403,12 +359,12 @@
                 modal.classList.remove('hide');
             }, 300);
         }
-        
+
         function showShareThoughtsModal() {
             const modal = document.getElementById('shareThoughtsModal');
             modal.classList.remove('hidden');
         }
-        
+
         function hideShareThoughtsModal() {
             const modal = document.getElementById('shareThoughtsModal');
             modal.classList.add('hide');
@@ -417,7 +373,7 @@
                 modal.classList.remove('hide');
             }, 300);
         }
-        
+
         function toggleDarkMode() {
             const app = document.getElementById('app');
             const darkModeIcon = document.getElementById('darkModeIcon');
@@ -433,12 +389,12 @@
                 localStorage.setItem('darkMode', 'disabled');
             }
         }
-        
+
         function loadDarkModePreference() {
             const darkModePreference = localStorage.getItem('darkMode');
             const app = document.getElementById('app');
             const darkModeIcon = document.getElementById('darkModeIcon');
-        
+
             if (darkModePreference === 'enabled') {
                 app.classList.add('dark');
                 darkModeIcon.classList.remove('ri-sun-line');
@@ -449,39 +405,11 @@
                 darkModeIcon.classList.add('ri-sun-line');
             }
         }
-        
-        function createSkeletonPost() {
-            return `
-                <div class="bg-gray-100 p-4 mb-4 rounded">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center">
-                            <div class="w-8 h-8 bg-gray-300 rounded-full mr-2 skeleton"></div>
-                            <div class="w-24 h-4 skeleton"></div>
-                        </div>
-                        <div class="w-16 h-4 skeleton"></div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-text"></div>
-                        <div class="skeleton skeleton-text"></div>
-                    </div>
-                    <div class="flex justify-between items-center mt-2">
-                        <div class="w-12 h-4 skeleton"></div>
-                        <div class="w-20 h-4 skeleton"></div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function loadSkeletonPosts() {
-            const postsContainer = document.getElementById('postsContainer');
-            postsContainer.innerHTML = createSkeletonPost().repeat(7); // 7 skeleton posts
-        }
-        
+
         function createPostElement(post) {
             const date = new Date(post.created_at);
             return `
-                <div class="bg-gray-100 p-4 mb-4 rounded">
+                <div class="bg-white shadow-md p-4 mb-4 rounded">
                     <div class="flex justify-between items-center mb-2">
                         <div class="flex items-center">
                             <div class="w-8 h-8 bg-gray-300 rounded-full mr-2 overflow-hidden">
@@ -499,26 +427,21 @@
                 </div>
             `;
         }
-        
+
         function loadPosts() {
             const postsContainer = document.getElementById('postsContainer');
             const postsData = JSON.parse(document.getElementById('postsData').textContent);
             postsContainer.innerHTML = postsData.map(createPostElement).join('');
         }
-        
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.toggle('open');
-        }
-        
+
         document.addEventListener('DOMContentLoaded', function() {
             loadPosts();
-        
+
             document.getElementById('postForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const content = document.getElementById('postContent').value;
                 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        
+
                 fetch('', {
                     method: 'POST',
                     headers: {
@@ -543,26 +466,25 @@
                     alert('An error occurred while posting. Please try again.');
                 });
             });
-        
+
             document.getElementById('darkModeToggle').addEventListener('click', toggleDarkMode);
-            document.getElementById('mobileMenuToggle').addEventListener('click', toggleMobileMenu);
-            document.getElementById('closeMobileMenu').addEventListener('click', toggleMobileMenu);
-        
-            // Preloader and initial setup
-            setTimeout(function() {
-                document.getElementById('preloader').style.display = 'none';
-                document.getElementById('app').classList.remove('hidden');
-                loadSkeletonPosts();
-                showWelcomeModal();
-        
-                setTimeout(function() {
-                    loadPosts();
-                }, 2000);
-            }, 1000);
-        
+            document.getElementById('leftMenuToggle').addEventListener('click', function() {
+                document.getElementById('leftMobileMenu').classList.add('open');
+            });
+            document.getElementById('rightMenuToggle').addEventListener('click', function() {
+                document.getElementById('rightMobileMenu').classList.add('open');
+            });
+            document.getElementById('closeLeftMenu').addEventListener('click', function() {
+                document.getElementById('leftMobileMenu').classList.remove('open');
+            });
+            document.getElementById('closeRightMenu').addEventListener('click', function() {
+                document.getElementById('rightMobileMenu').classList.remove('open');
+            });
+
             updateDateTime();
             setInterval(updateDateTime, 1000);
             loadDarkModePreference();
+            showWelcomeModal();
         });
     </script>
     <script id="postsData" type="application/json">

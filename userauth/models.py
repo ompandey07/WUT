@@ -22,3 +22,16 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+CustomUser = get_user_model()
+
+class Task(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s task created at {self.created_at}"
+
+    class Meta:
+        ordering = ['-created_at']

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from .models import CustomUser , Post
+from .models import CustomUser , Post , Task
 from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
@@ -138,10 +138,14 @@ def dashboard_view(request):
     posts = Post.objects.all().select_related('user').order_by('-created_at')
     posts_json = json.dumps(list(posts), cls=CustomJSONEncoder)
 
+    # Fetch recent tasks
+    recent_tasks = Task.objects.filter(user=user).order_by('-created_at')[:10]
+
     context = {
         'user': user,
         'profile_picture': user.profile_picture.url if user.profile_picture else None,
-        'posts_json': posts_json
+        'posts_json': posts_json,
+        'recent_tasks': recent_tasks  # Add recent tasks to the context
     }
     return render(request, "Pages/Dashboard.html", context)
 #############################################################
@@ -171,6 +175,56 @@ def user_profile_view(request):
         'joined_date': user.registration_date.strftime('%B %d, %Y')
     }
     return render(request, 'Pages/UserProfile.html', context)
+#############################################################
+# This View Ends Here 
+#############################################################
+
+
+
+
+
+#############################################################
+# **** This View Handles Works Of Users ***
+#############################################################
+@login_required
+@require_http_methods(["GET", "POST"])
+def work_view(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        action = data.get('action')
+        task_id = data.get('task_id')
+        content = data.get('content')
+
+        if action == 'add':
+            task = Task.objects.create(user=request.user, content=content)
+            return JsonResponse({
+                'status': 'success',
+                'task': {
+                    'id': task.id,
+                    'content': task.content,
+                    'created_at': task.created_at.strftime('%Y-%m-%d %H:%M:%S')
+                }
+            })
+        elif action == 'update' and task_id:
+            try:
+                task = Task.objects.get(id=task_id, user=request.user)
+                task.content = content
+                task.save()
+                return JsonResponse({'status': 'success'})
+            except Task.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Task not found'})
+        elif action == 'delete' and task_id:
+            try:
+                task = Task.objects.get(id=task_id, user=request.user)
+                task.delete()
+                return JsonResponse({'status': 'success'})
+            except Task.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Task not found'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid action'})
+
+    tasks = Task.objects.filter(user=request.user)
+    return render(request, 'Pages/Works.html', {'user': request.user, 'tasks': tasks})
 #############################################################
 # This View Ends Here 
 #############################################################
